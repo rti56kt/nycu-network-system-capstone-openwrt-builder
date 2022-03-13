@@ -50,7 +50,7 @@ jobs:
       run: |
         cd openwrt-imagebuilder-*/
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
-        make -j $(nproc) image PROFILE=edimax_br-6478ac-v2 PACKAGES="-ppp -ppp-mod-pppoe -ip6tables -odhcp6c -kmod-ipv6 -kmod-ip6tables -odhcpd-ipv6only uhttpd uhttpd-mod-ubus libiwinfo-lua luci-base luci-app-firewall luci-mod-admin-full luci-theme-bootstrap openvswitch" && echo "::set-output name=build-success::true" || echo "::set-output name=build-success::false"
+        make -j $(nproc) image PROFILE=edimax_br-6478ac-v2 PACKAGES="-ppp -ppp-mod-pppoe -ip6tables -odhcp6c -kmod-ipv6 -kmod-ip6tables -odhcpd-ipv6only uhttpd uhttpd-mod-ubus libiwinfo-lua luci-base luci-app-firewall luci-app-opkg luci-mod-admin-full luci-theme-bootstrap openvswitch" && echo "::set-output name=build-success::true" || echo "::set-output name=build-success::false"
         echo "::set-output name=done-time::$(date +%s)"
 
     - name: Upload Bin Directory
