@@ -32,12 +32,15 @@ jobs:
 
     - name: Get Latest Version From Official Release
       run: |
-        echo "LATESTTAG=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/openwrt/openwrt/releases/latest | awk -F '/' '{ print $NF }' | cut -c 2-)" >> $GITHUB_ENV
+        echo "LATESTTAG=$(curl -Ls -o /dev/null -w %{url_effective} \
+        https://github.com/openwrt/openwrt/releases/latest | \
+        awk -F '/' '{ print $NF }' | cut -c 2-)" >> $GITHUB_ENV
 
     - name: Download Image Builder From Official Release
       id: downloadLatestImageBuilder
       run: |
-        wget -q https://downloads.openwrt.org/releases/${{ env.LATESTTAG }}/targets/ramips/mt7620/openwrt-imagebuilder-${{ env.LATESTTAG }}-ramips-mt7620.Linux-x86_64.tar.xz && echo "::set-output name=ib-file-exist::true" || echo "::set-output name=ib-file-exist::false"
+        wget -q https://downloads.openwrt.org/releases/${{ env.LATESTTAG }}/targets/ramips/mt7620/openwrt-imagebuilder-${{ env.LATESTTAG }}-ramips-mt7620.Linux-x86_64.tar.xz && \
+        echo "::set-output name=ib-file-exist::true" || echo "::set-output name=ib-file-exist::false"
 
     - name: Decompress Image Builder
       if: steps.downloadLatestImageBuilder.outputs.ib-file-exist == 'true'
@@ -50,7 +53,11 @@ jobs:
       run: |
         cd openwrt-imagebuilder-*/
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
-        make -j $(nproc) image PROFILE=edimax_br-6478ac-v2 PACKAGES="-ppp -ppp-mod-pppoe -ip6tables -odhcp6c -kmod-ipv6 -kmod-ip6tables -odhcpd-ipv6only uhttpd uhttpd-mod-ubus libiwinfo-lua luci-base luci-app-firewall luci-app-opkg luci-app-ttyd luci-mod-admin-full luci-theme-bootstrap openvswitch" && echo "::set-output name=build-success::true" || echo "::set-output name=build-success::false"
+        make -j $(nproc) image PROFILE=edimax_br-6478ac-v2 \
+        PACKAGES="-ppp -ppp-mod-pppoe -ip6tables -odhcp6c -kmod-pppoe -kmod-ipv6 -kmod-ip6tables -odhcpd-ipv6only \
+        uhttpd uhttpd-mod-ubus libiwinfo-lua luci-base luci-app-firewall luci-app-opkg luci-mod-admin-full \
+        luci-theme-bootstrap openvswitch cjson" && \
+        echo "::set-output name=build-success::true" || echo "::set-output name=build-success::false"
         echo "::set-output name=done-time::$(date +%s)"
 
     - name: Upload Bin Directory
